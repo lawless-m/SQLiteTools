@@ -2,7 +2,12 @@ module SQLiteTools
 
 using SQLite
 
-export bind!, exebind!, truncate!, column_n, table_by, select_all
+inserts = Dict()
+updates = Dict()
+
+export bind!, exebind!, truncate!, column_n, table_by, select_all, insert!
+
+insert!(db, name, sql) = inserts[name] = SQLite.Stmt(db, sql)
 
 bind!(st::SQLite.Stmt, vals::Vector, cols::Vector) = foreach((n)->SQLite.bind!(st, cols[n], vals[n]), 1:length(cols))
 
@@ -23,6 +28,15 @@ truncate!(db, table::String) = SQLite.query(db, "DELETE FROM $table")
 column_n(db, table::String, n::Integer) = SQLite.query(db, "SELECT * from $table")[1:end, n]
 
 table_by(db, table::String, orderby::String) = SQLite.query(db, "select * from $table Order By $orderby")	
+
+
+bind!(ins::String, coln::Int, val) = SQLite.bind!(inserts[ins], coln, val)
+
+bind!(ins::String, vals::Vector, cols::Vector) = bind!(inserts[ins], vals, cols)
+
+exebind!(ins::String, vals::Vector, cols::Vector) = exebind!(inserts[ins], vals, cols)
+
+exebind!(ins::String, vals::Vector) = exebind!(inserts[ins], vals)
 
 
 end
