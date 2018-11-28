@@ -8,10 +8,9 @@ updates = Dict()
 
 export bind!, exebind!, truncate!, column_n, table_by, select_all, insert!, missInt, int2date, int2time
 
-missInt(v) = typeof(v) == Missings.Missing ? 0 : v
-int2date(dv) = dv > 0 ? ymd(Date(Dates.UTD(missInt(dv)))) : ""
-int2time(dv) = dv > 0 ? DateTime(Dates.UTM(missInt(dv))): DateTime(now())
-
+missInt(v) = typeof(v) == Missings.Missing ? 0 : convert(Int, v)
+int2date(dv) = Date(Dates.UTD(missInt(dv)))
+int2time(dv) = DateTime(Dates.UTM(missInt(dv)))
 insert!(db, name, sql) = inserts[name] = SQLite.Stmt(db, sql)
 
 bind!(st::SQLite.Stmt, vals::Vector, cols::Vector) = foreach((n)->SQLite.bind!(st, cols[n], vals[n]), 1:length(cols))
