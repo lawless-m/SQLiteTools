@@ -1,11 +1,16 @@
 module SQLiteTools
 
 using SQLite
+using DataArrays
 
 inserts = Dict()
 updates = Dict()
 
-export bind!, exebind!, truncate!, column_n, table_by, select_all, insert!
+export bind!, exebind!, truncate!, column_n, table_by, select_all, insert!, missInt, int2date, int2time
+
+missInt(v) = typeof(v) == Missings.Missing ? 0 : v
+int2date(dv) = dv > 0 ? ymd(Date(Dates.UTD(missInt(dv)))) : ""
+int2time(dv) = dv > 0 ? DateTime(Dates.UTM(missInt(dv))): DateTime(now())
 
 insert!(db, name, sql) = inserts[name] = SQLite.Stmt(db, sql)
 
