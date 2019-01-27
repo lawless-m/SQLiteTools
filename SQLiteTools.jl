@@ -6,7 +6,7 @@ using DataArrays
 inserts = Dict()
 updates = Dict()
 
-export bind!, exebind!, truncate!, table_by, select_all, insert!, missInt, int2date, int2time
+export bind!, exebind!, truncate!, table_by, select_all, insert!, missInt, int2date, int2time, key_val
 
 missInt(v) = typeof(v) == Missings.Missing ? 0 : convert(Int, v)
 int2date(dv) = Date(Dates.UTD(missInt(dv)))
@@ -29,7 +29,7 @@ end
 
 truncate!(db, table::String) = SQLite.query(db, "DELETE FROM $table")
 
-table_by(db, table::String, orderby::String) = SQLite.query(db, "select * from $table Order By $orderby")	
+table_by(db, table::String, orderby::String) = SQLite.query(db, "select * from $table Order By $orderby")
 
 bind!(ins::String, coln::Int, val) = SQLite.bind!(inserts[ins], coln, val)
 
@@ -39,6 +39,12 @@ exebind!(ins::String, vals::Vector, cols::Vector) = exebind!(inserts[ins], vals,
 
 exebind!(ins::String, vals::Vector) = exebind!(inserts[ins], vals)
 
-
+function key_val(frame, k, v)
+	kv = Dict{typeof(frame[1,k]), typeof(frame[1,v])}()
+	foreach(r->kv[frame[r,k]]=frame[r,v], 1:size(frame,1))
+	kv
 end
 
+
+##########################
+end
