@@ -40,6 +40,7 @@ exebind!(ins::String, vals::Vector, cols::Vector) = exebind!(inserts[ins], vals,
 exebind!(ins::String, vals::Vector) = exebind!(inserts[ins], vals)
 
 function key_val(frame, k, v)
+	# assumes the keys are unique - or at least that later rows overwriting earlier ones is what is required
 	kv = Dict{typeof(frame[1,k]), typeof(frame[1,v])}()
 	foreach(r->kv[frame[r,k]]=frame[r,v], 1:size(frame,1))
 	kv
