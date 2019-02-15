@@ -39,7 +39,7 @@ exebind!(ins::String, vals::Vector, cols::Vector) = exebind!(inserts[ins], vals,
 
 exebind!(ins::String, vals::Vector) = exebind!(inserts[ins], vals)
 
-last_insert(db) = SQLite.query(db, "SELECT last_insert_id()")[1][1]
+last_insert(db) = SQLite.query(db, "SELECT last_insert_rowid()")[1][1]
 
 function key_val(frame, k, v)
 	# assumes the keys are unique - or at least that later rows overwriting earlier ones is what is required
