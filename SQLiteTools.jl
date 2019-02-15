@@ -6,7 +6,7 @@ using DataArrays
 inserts = Dict()
 updates = Dict()
 
-export bind!, exebind!, truncate!, table_by, select_all, insert!, missInt, int2date, int2time, key_val
+export bind!, exebind!, truncate!, table_by, select_all, insert!, missInt, int2date, int2time, key_val, last_insert
 
 missInt(v) = typeof(v) == Missings.Missing ? 0 : convert(Int, v)
 int2date(dv) = Date(Dates.UTD(missInt(dv)))
@@ -38,6 +38,8 @@ bind!(ins::String, vals::Vector, cols::Vector) = bind!(inserts[ins], vals, cols)
 exebind!(ins::String, vals::Vector, cols::Vector) = exebind!(inserts[ins], vals, cols)
 
 exebind!(ins::String, vals::Vector) = exebind!(inserts[ins], vals)
+
+last_insert(db) = SQLite.query(db, "SELECT last_insert_id()")[1][1]
 
 function key_val(frame, k, v)
 	# assumes the keys are unique - or at least that later rows overwriting earlier ones is what is required
